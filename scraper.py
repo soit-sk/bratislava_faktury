@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import scraperwiki
+from warnings import warn
 from urllib import urlopen
 from bs4 import BeautifulSoup
 from StringIO import StringIO
@@ -79,6 +80,11 @@ values = []
 for page in soup.find_all('page'):
     this_page = do_page(page)
     values = values + this_page
+
+# Fold long columns
+for row in values:
+    while len(row) > 11:
+        row[-2] = row[-2] + ' ' + row.pop()
 
 # Format into the database
 header = values.pop(0)
