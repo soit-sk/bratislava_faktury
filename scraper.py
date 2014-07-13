@@ -91,7 +91,9 @@ def do_page(soup):
     return ret
 
 # Do the parsing
-inf = StringIO(urlopen('http://www.bratislava.sk/register/VismoOnline_ActionScripts/File.ashx?id_org=700026&id_dokumenty=27222').read())
+#inf = StringIO(urlopen('http://www.bratislava.sk/register/VismoOnline_ActionScripts/File.ashx?id_org=700026&id_dokumenty=27222').read())
+import sys
+inf = file(sys.argv[1], 'rb')
 xml = pdf2xml(inf)
 soup = BeautifulSoup(xml)
 
@@ -108,5 +110,12 @@ for row in values:
 
 # Format into the database
 header = values.pop(0)
+#for row in values:
+#    scraperwiki.sql.save([], dict(zip(header, row)))
+
+print ','.join(['"{}"'.format(x.encode('utf-8')) for x in header])
 for row in values:
-    scraperwiki.sql.save([], dict(zip(header, row)))
+    if len(row) != len(header):
+        warn('Wrong column count: ' + ','.join(['"{}"'.format(x.encode('utf-8')) for x in row]))
+        continue
+    print ','.join(['"{}"'.format(x.encode('utf-8')) for x in row])
