@@ -52,7 +52,7 @@ def do_page(soup):
         # The bounding box
         x, y, _, _ = cell.get('bbox').split(',')
         x = float(x)
-        y = float(y)
+        y = int(float(y))
 
         if not cells.has_key(y):
             cells[y] = {}
