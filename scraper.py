@@ -27,7 +27,6 @@ def pdf2xml(infile):
 
     # Empirically determined...
     laparams = LAParams()
-    laparams.word_margin = 0.03
     laparams.char_margin = 0.4
 
     # See pdf2txt.py
