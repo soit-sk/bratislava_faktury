@@ -8,8 +8,13 @@ from pdfminer.converter import XMLConverter
 from pdfminer.layout import LAParams
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfinterp import PDFResourceManager
-from pdfminer.pdfpage import PDFPage
 from pdfminer.layout import LAParams
+try:
+    from pdfminer.pdfpage import PDFPage
+    page_api = True
+except ImportError:
+    from pdfminer.pdfinterp import process_pdf
+    page_api = False
 
 def pdf2xml(infile):
     '''
@@ -25,8 +30,11 @@ def pdf2xml(infile):
     device = XMLConverter(rsrcmgr, outfile, codec='utf-8', laparams=laparams)
     interpreter = PDFPageInterpreter(rsrcmgr, device)
 
-    for page in PDFPage.get_pages(infile, set()):
-        interpreter.process_page(page)
+    if page_api:
+        for page in PDFPage.get_pages(infile, set()):
+            interpreter.process_page(page)
+    else:
+        process_pdf(rsrcmgr, device, infile, set())
 
     infile.close()
     return outfile.getvalue().replace("\n", "")
