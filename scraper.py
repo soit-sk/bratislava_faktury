@@ -25,8 +25,12 @@ def pdf2xml(infile):
 
     outfile = StringIO()
 
-    # See pdf2txt.py
+    # Empirically determined...
     laparams = LAParams()
+    laparams.word_margin = 0.03
+    laparams.char_margin = 0.4
+
+    # See pdf2txt.py
     rsrcmgr = PDFResourceManager()
     device = XMLConverter(rsrcmgr, outfile, codec='utf-8', laparams=laparams)
     interpreter = PDFPageInterpreter(rsrcmgr, device)
