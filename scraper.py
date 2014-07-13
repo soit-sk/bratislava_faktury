@@ -44,24 +44,40 @@ def pdf2xml(infile):
     infile.close()
     return outfile.getvalue().replace("\n", "")
 
+np = 0
 
 def do_page(soup):
     '''
     Return list of lists of ordered cell contents for given XML page.
     '''
 
+    global np
+    svg = file(sys.argv[1].replace('pdf', 'svg').replace('.svg', '-{}.svg').format(np), 'w')
+    np = np + 1
+
+    _, _, x, y = soup.get('bbox').split(',')
+    svg.write('<svg width="{}" height="{}">'.format (x, y))
+
     # Wall all textlines, taking a note of their absolute position
     # along with the textual values.
     cells = {}
     for cell in soup.find_all('textline'):
         # The bounding box
-        x, y, _, _ = cell.get('bbox').split(',')
+        x, y, x2, y2 = cell.get('bbox').split(',')
         x = float(x)
         y = int(float(y))
+
+        width, height = float(x2) - x, float(y2) - y
+        svg.write('<rect x="{}" y="{}" width="{}" height="{}" '.format (x, y, width, height))
+        svg.write('style="fill-opacity: 0; stroke: rgb(255,128,128); stroke-width: 1" />')
+        svg.write('<text x="{}" y="{}" font-size="5">{}</text>'.format (x, y2, cell.get_text().encode('utf-8')))
 
         if not cells.has_key(y):
             cells[y] = {}
         cells[y][x] = cell.get_text()
+
+    svg.write('</svg>')
+    svg.close()
 
     # Fetch values from columns and rows sorted by their absolute
     # positions. 0,0 is left bottom corner in PDF.
