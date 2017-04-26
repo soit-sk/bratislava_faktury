@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 import scraperwiki
 from warnings import warn
@@ -92,4 +93,4 @@ for row in values:
 # Format into the database
 header = values.pop(0)
 for row in values:
-    scraperwiki.sql.save([], dict(zip(header, row)))
+    scraperwiki.sql.save(unique_keys=['Interné čís.'], data=dict(zip(header, row)))
